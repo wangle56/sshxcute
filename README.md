@@ -6,7 +6,12 @@ sshxcute is a framework designed to let engineers to use Java call to execute co
 
 As its name indicates, SSHXCUTE is a framework. It was designed to let engineers to use Java call to execute command/script on remote Linux/UNIX system through SSH connection way, which make software testing or system deployment easier and specifically to make it easier to automate software testing and system environment deployment.
 
-SSHXCUTE was designed with the following points in mind: * Minimum machine requirements – Only use SSH protocol to connect. * Easily useable - Engineers use Java code to execute command/script. * Build-in executing command/script task type * Easily extendable - This means that it should be easy to create other task type to plug into sshxcute.
+SSHXCUTE was designed with the following points in mind:
+
+* Minimum machine requirements – Only use SSH protocol to connect.
+* Easily useable - Engineers use Java code to execute command/script.
+* Build-in executing command/script task type
+* Easily extendable - This means that it should be easy to create other task type to plug into sshxcute.
 
 ## 2. Limitation and scope
 
@@ -15,6 +20,7 @@ SSHXCUTE was designed with the following points in mind: * Minimum machine requi
 Remote system should open SSH connection with credential enabled.
 1. You can only plug sshxcute into Java based project.
 2. JDK version newer or equal to 5.0
+
 ### 2.2 Scope
 
 Scenario 1. If you have a batch of commands/scripts that are to be run on remote system (maybe deploying development or production system environment), and you think developing a script to invoke every command/script is too complex. And you have one Java IDE (like Eclipse) on your windows/Linux, why not try to execute through your client side?
@@ -40,19 +46,25 @@ The first three steps can be stimulated and finished by sshxcute Java API.
 
 ```java
 // Initialize a ConnBean object, parameter list is ip, username, password
-        ConnBean cb = new ConnBean("ip ", "username","password");
-        // Put the ConnBean instance as parameter for SSHExec static method getInstance(ConnBean) to retrieve a singleton
-        SSHExec instance ssh = SSHExec.getInstance(cb); 
-        // Connect to server ssh.connect();
+ConnBean cb = new ConnBean("ip ", "username","password");
+// Put the ConnBean instance as parameter for SSHExec static method getInstance(ConnBean) to retrieve a singleton
+SSHExec instance ssh = SSHExec.getInstance(cb); 
+// Connect to server ssh.connect();
 ```
 
 The 4th step is the core jobs that we want to do – executing commands/scripts. Please see below section for more information.
 
-The 5th step is used to disconnect from server: ssh.disconnect();
+The 5th step is used to disconnect from server: 
+```java
+ssh.disconnect();
+```
 
 ### 3.2 Execute command on remote system
 
-Let’s jump into sshxcute Java API code directly, then later we will explain that. Because it is so obvious that if you have OO programming experience, you will fell it is so easy. CustomTask sampleTask = new ExecCommand("echo 123"); ssh.exec(sampleTask);
+Let’s jump into sshxcute Java API code directly, then later we will explain that. Because it is so obvious that if you have OO programming experience, you will fell it is so easy. 
+```java
+CustomTask sampleTask = new ExecCommand("echo 123"); ssh.exec(sampleTask);
+```
 
 ExecCommand class extends CustomTask class, we create ExecCommand object that has a CustomTask class type reference. Below picture shows the class diagram for ExecCommand, ExecShellScript and CustomTask.
 
@@ -64,9 +76,12 @@ The only parameter for ExecCommand constructor is the command string. Note to ex
 CustomTask sampleTask = new ExecCommand("echo 123", "echo 456,"echo 789");
 ```
 
-ExecCommand constructor is * public ExecCommand(String...args)
+ExecCommand constructor is 
+```java
+public ExecCommand(String...args)
+```
 
-Put the ExecCommand instance as argument into SSHExec.exec(CustomTask) method, then it begins to run.
+Put the ExecCommand instance as argument into *SSHExec.exec(CustomTask)* method, then it begins to run.
 
 ### 3.3 Execute shell script on remote system
 
@@ -214,7 +229,10 @@ All the output and error message can be found at the path you execute SSHXCUTE. 
 
 There are some configurable parameters that users can specify according to their needs. The API is like the following format:
 
+```java
 SSHExec.setOption(String optionName, String/int/long value);
+```
+
 The clause should put at the very beginning, so that when executing tasks, these configurations will be applied.
 
 The below section will describe how to configure all the parameters.
@@ -589,10 +607,19 @@ try {
 
 # Appendix A.
 
+```bash
+#!/bin/bash
+if [ $# -ne 2 ];then
+        echo "usage: sshxcute_test.sh username password"
+        exit 1
+fi
+export USERNAME=$1
+export PASSWORD=$2
+
+if [ "$USERNAME" = "hello" -a "$PASSWORD" = "world" ];then
+	echo "Login success"
+	exit 0
+fi
+echo "Login falied"
+exit 2
 ```
-
-!/bin/bash
-
-if [ $# -ne 2 ];then echo "usage: sshxcute_test.sh username password" exit 1 fi export USERNAME=$1 export PASSWORD=$2
-
-if [ "$USERNAME" = "hello" -a "$PASSWORD" = "world" ];then echo "Login success" exit 0 fi echo "Login falied" exit 2 ```
